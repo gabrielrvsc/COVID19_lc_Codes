@@ -6,7 +6,7 @@
 - The data folder has a sample dataset. The Error Correction Function must receive data on that format. 
 - The data must count the days after the case X (for example 100). This is represented in the variable day. Observations before this day for each country must be removed from the panel. 
 - The data folder has an example of a function that takes the John Hopkins data and transforms it in to the correct format. This function will work as long as John Hopkins keep the data in the same format. 
-- These codes represent our best effort to forecast the number of cases and deaths from Covid-19 in the very short-run in Brazil. As we explain in the companion <a href = https://arxiv.org/abs/2004.07977 >paper<\a>, given the short sample, measurement errors, structural breaks, we cannot guarantee that the model will perform well under all contingencies possible. Needless to say, we are not responsible for any misuse of these codes and/or the forecasts. We aim to keep developing the forecasting method, and updating these codes. Any suggestion on how to improve the codes and/or the forecasting method is more than welcome.
+- These codes represent our best effort to forecast the number of cases and deaths from Covid-19 in the very short-run in Brazil. As we explain in the companion <a href = https://arxiv.org/abs/2004.07977 >paper</a>, given the short sample, measurement errors, structural breaks, we cannot guarantee that the model will perform well under all contingencies possible. Needless to say, we are not responsible for any misuse of these codes and/or the forecasts. We aim to keep developing the forecasting method, and updating these codes. Any suggestion on how to improve the codes and/or the forecasting method is more than welcome.
 
 
 ## ECM example
