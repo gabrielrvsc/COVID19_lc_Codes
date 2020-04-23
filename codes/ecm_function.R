@@ -12,7 +12,7 @@
 #
 # A list where the first object inside contains the forecasts for cases and deaths and the 95% confidence intervals
 
-run_lasso = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv = FALSE, alpha_s = 1){
+run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv = FALSE, alpha_s = 1){
   cases = dcast(modelpanel,day~country, value.var = "cases")
   y_end = which(is.na(cases[,target]))[1]
   remove = which(is.na(cases[y_end+1,]))
