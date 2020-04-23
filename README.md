@@ -9,4 +9,10 @@
 - 
 
 
-<code>aaaaa</code>
+## ECM example
+
+- If you used the John Hopkins script in the data folder do download and format the panel you can run the ECM with the following code:
+
+<code>run_ecm(modelpanel = panel, M = 14, target = "Brazil", ssize = 30, inflate = 5, alpha_s = 1)</code>
+
+- Note that the coutry you select as target must have enough countries ahead of it in the epidemic cycle. If you use <code>M=14</code> you will need to have a good number of countries at least 14 days ahead in the cycle than the target country.  
