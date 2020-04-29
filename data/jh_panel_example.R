@@ -35,7 +35,6 @@ panel_jh = function(ds_conf,ds_death, ncases_start){
   ds_melt = ds_melt %>% filter(cases>=ncases_start)
   
   ds_melt = ds_melt %>% arrange(country, subregion, date)
-  ds_melt = ds_melt %>% filter(country!="Brazil") %>% filter(country!="US")
   
   z = rep(NA,nrow(ds_melt))
   for(i in 1:nrow(ds_melt)){
