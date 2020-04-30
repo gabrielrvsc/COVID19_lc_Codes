@@ -59,4 +59,5 @@ library(reshape2)
 confirmed_jh = read.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
 deaths_jh = read.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
 
-panel = panel_jh(confirmed_jh, deaths_jh, 100)
+panel = panel_jh(confirmed_jh, deaths_jh, 100) %>% filter(subregion == "FULL")
+
