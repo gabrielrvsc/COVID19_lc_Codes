@@ -123,7 +123,7 @@ run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv
       tgt = c()
       for(i in 1:M){
         if(i==1){
-          aux = log((1/modelstat["alpha0"])*pr_mat[i,"forecast"]) + rnorm(1,0,modelstat["dsd"])
+          aux = log((1/modelstat["alpha0"])*pr_mat[i,"forecast"]) + rnorm(1,0,modelstat["sd"])
           tgt[i] = max(aux,tail(y,1))
         }else{
           aux = log(pr_mat[i,"forecast"])-log(pr_mat[i-1,"forecast"])
