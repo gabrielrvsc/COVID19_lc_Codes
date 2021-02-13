@@ -7,12 +7,14 @@
 # 4) inflate: How may observations will be inflated. The most recent observation will be repeated "inflate" times, the one before "inflate"-1 and so on.
 # 5) is.cv: FALSE if the model is to compute confidence intervals.
 # 6) alpha_s: 1 for lasso, 0 for ridge. 
+# 7) qtrend: TRUE to include trend t + t^2.
 
 ####### Returns #########
 #
 # A list where the first object inside contains the forecasts for cases and deaths and the 95% confidence intervals
 
-run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv = FALSE, alpha_s = 1){
+run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv = FALSE, alpha_s = 1, qtrend= TRUE){
+  
   cases = dcast(modelpanel,day~country, value.var = "cases")
   y_end = which(is.na(cases[,target]))[1]
   remove = which(is.na(cases[y_end+1,]))
@@ -34,12 +36,16 @@ run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv
   }
   
   idx = c(idx,1:N)
-  #idx = c(1:N)
-  
   
   y = tail(log(insample$target),N)
   x = tail(log(as.matrix(insample%>%select(-target))),N)
+  if(qtrend==TRUE){
+    x = cbind(x,t = 1:nrow(x),t2 = (1:nrow(x))^2)
+  }
   xout = log(as.matrix(oos%>%select(-target)))
+  if(qtrend==TRUE){
+    xout = cbind(xout,t = (nrow(x)+1):(nrow(x)+M), t2 = ((nrow(x)+1):(nrow(x)+M))^2)
+  }
   y = y[idx]
   x = x[idx,]
   
@@ -52,7 +58,7 @@ run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv
   
   
   model = ic.glmnet(x,y, alpha = alpha_s)
-  
+  res1 = model$residuals[1:N]
   nvar = model$nvar
   r2 = exp(var(fitted(model)[1:N]))/exp(var(y[1:N]))
   pval = pp.test(model$residuals[1:N])$p.value 
@@ -88,7 +94,16 @@ run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv
     }
     p1 = (c[1] - coef(model)[1]*c[length(c)])
     p2 = sum(c[2:(length(c)-1)]*deltaxt,na.rm = TRUE)
-    prlog[h] = p1+p2+p3+p4
+    
+    pall = p1+p2+p3+p4
+    if(h==1){
+      if(pall<tail(y,1)){
+        aux = diff(tail(y,2))
+        pall = tail(y,1)+aux
+      }
+    }
+    
+    prlog[h] = pall
   }
   
   fitted = c(tail(fitted(dmodel),N-1))
@@ -161,7 +176,7 @@ run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv
   death_ratio = modelpanel%>%filter(country==target) %>% arrange(date)
   #death_ratio = mean(tail(death_ratio$deaths,1)/tail(death_ratio$cases,1))
   
-  mdeaths = lm(tail(log(death_ratio$deaths),5)~tail(log(death_ratio$cases),5))
+  mdeaths = lm(tail(log(death_ratio$deaths),7)~tail(log(death_ratio$cases),7))
   prd = exp(cbind(1,log(pr_mat$forecast))%*%coef(mdeaths))
   prdlb = exp(cbind(1,log(pr_mat$lb))%*%coef(mdeaths))
   prdub = exp(cbind(1,log(pr_mat$ub))%*%coef(mdeaths))
@@ -188,6 +203,7 @@ run_ecm = function(modelpanel,M,target = "Brazil",ssize = 30, inflate = 4, is.cv
   pr_mat$rate_lb_deaths = dlbpc_deaths
   pr_mat$rate_ub_deaths = dubpc_deaths
   pr_mat[which(pr_mat<0,arr.ind = TRUE)] = 0
-  res = list(result = pr_mat, countries = variables, betas = coef(model), betasecm = coef(dmodel), modelstat = modelstat)
+  res = list(result = pr_mat, countries = variables, betas = coef(model), betasecm = coef(dmodel), modelstat = modelstat, residuals = res1)
 }
+
 
